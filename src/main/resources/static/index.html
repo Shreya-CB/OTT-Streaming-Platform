@@ -1,0 +1,1506 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OTT Platform – J11</title>
+  <style>
+    :root {
+      --bg: #0f0f13; --surface: #1a1a24; --card: #22222f;
+      --accent: #6c63ff; --accent2: #ff6584;
+      --text: #e8e8f0; --muted: #8888aa;
+      --green: #42d392; --red: #ff6584; --yellow: #ffd166;
+      --radius: 10px; --font: 'Segoe UI', system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; }
+
+    /* ── Nav ── */
+    nav { background: var(--surface); display: flex; align-items: center;
+          padding: 0 2rem; height: 60px; gap: 1rem; border-bottom: 1px solid #2a2a3a; position: sticky; top:0; z-index:100; }
+    nav .logo { font-size: 1.3rem; font-weight: 700; color: var(--accent); margin-right: auto; }
+    nav button { background: none; border: none; color: var(--muted); cursor: pointer; padding: .4rem .8rem;
+                 border-radius: var(--radius); font-size: .9rem; transition: all .2s; }
+    nav button:hover, nav button.active { background: var(--accent); color: #fff; }
+
+    /* ── Layout ── */
+    .page { display: none; padding: 2rem; max-width: 1100px; margin: 0 auto; }
+    .page.active { display: block; }
+    h2 { font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--accent); }
+    h3 { font-size: 1.1rem; margin-bottom: 1rem; color: var(--text); }
+
+    /* ── Cards ── */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 1.2rem; }
+    .card { background: var(--card); border-radius: var(--radius); padding: 1.2rem;
+            border: 1px solid #2a2a3a; transition: border-color .2s; }
+    .card:hover { border-color: var(--accent); }
+    .card .title { font-weight: 600; margin-bottom: .4rem; }
+    .card .meta  { font-size: .8rem; color: var(--muted); margin-bottom: .8rem; }
+    .card .actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+    /* ── Badges ── */
+    .badge { display: inline-block; padding: .2rem .6rem; border-radius: 99px; font-size: .75rem; font-weight: 600; }
+    .badge-green  { background: #42d39220; color: var(--green); }
+    .badge-red    { background: #ff658420; color: var(--red); }
+    .badge-yellow { background: #ffd16620; color: var(--yellow); }
+    .badge-blue   { background: #6c63ff20; color: var(--accent); }
+    .badge-gray   { background: #88888820; color: var(--muted); }
+
+    /* ── Forms ── */
+    .form-box { background: var(--card); border-radius: var(--radius);
+                padding: 2rem; max-width: 460px; border: 1px solid #2a2a3a; }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; font-size: .85rem; color: var(--muted); margin-bottom: .3rem; }
+    input, select, textarea {
+      width: 100%; background: var(--surface); border: 1px solid #2a2a3a;
+      color: var(--text); border-radius: 6px; padding: .55rem .8rem; font-size: .9rem;
+      outline: none; transition: border-color .2s; font-family: var(--font);
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 80px; }
+
+    /* ── Buttons ── */
+    .btn { padding: .55rem 1.1rem; border-radius: 6px; border: none; cursor: pointer;
+           font-size: .88rem; font-weight: 600; transition: opacity .2s; }
+    .btn:hover { opacity: .85; }
+    .btn-primary  { background: var(--accent); color: #fff; }
+    .btn-success  { background: var(--green);  color: #0f0f13; }
+    .btn-danger   { background: var(--red);    color: #fff; }
+    .btn-warning  { background: var(--yellow); color: #0f0f13; }
+    .btn-sm { padding: .3rem .7rem; font-size: .8rem; }
+    .btn-outline  { background: none; border: 1px solid var(--accent); color: var(--accent); }
+
+    /* ── Alert ── */
+    .alert { padding: .8rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: .9rem; }
+    .alert-success { background: #42d39220; color: var(--green); border: 1px solid #42d39240; }
+    .alert-error   { background: #ff658420; color: var(--red);   border: 1px solid #ff658440; }
+    .alert-info    { background: #6c63ff20; color: var(--accent); border: 1px solid #6c63ff40; }
+
+    /* ── Stats ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card  { background: var(--card); border-radius: var(--radius); padding: 1.2rem; text-align: center; border: 1px solid #2a2a3a; }
+    .stat-card .value { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .stat-card .label { font-size: .8rem; color: var(--muted); margin-top: .3rem; }
+
+    /* ── Toast ── */
+    #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--surface);
+             border: 1px solid var(--accent); color: var(--text); padding: .8rem 1.2rem;
+             border-radius: var(--radius); font-size: .9rem; display: none; z-index: 9999;
+             box-shadow: 0 4px 20px #0006; max-width: 320px; }
+    #toast.show { display: block; animation: fadein .3s; }
+    @keyframes fadein { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+    .section-gap { margin-bottom: 2.5rem; }
+    hr { border: none; border-top: 1px solid #2a2a3a; margin: 1.5rem 0; }
+    .tag { display:inline-block; background:#2a2a3a; color:var(--muted); border-radius:4px; padding:.15rem .5rem; font-size:.75rem; margin:.1rem; }
+    #loading { color: var(--muted); font-size:.9rem; padding: 1rem 0; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">▶ OTT Platform</span>
+  <button onclick="showPage('home')"      class="active" id="nav-home">Home</button>
+  <button onclick="showPage('auth')"      id="nav-auth">Register / Login</button>
+  <button onclick="showPage('content')"   id="nav-content">Content</button>
+  <button onclick="showPage('moderation')" id="nav-moderation">Moderation</button>
+  <button onclick="showPage('subscription')" id="nav-subscription">Subscriptions</button>
+  <button onclick="showPage('streaming')" id="nav-streaming">Stream</button>
+  <button onclick="showPage('admin')"     id="nav-admin">Admin</button>
+</nav>
+
+<div id="toast"></div>
+
+╔══════════════════════ HOME ═══════════════════════╗
+<div id="page-home" class="page active">
+  <h2>Welcome to OTT Platform – Team J11</h2>
+  <div class="stats-grid" id="home-stats">
+    <div class="stat-card"><div class="value" id="hs-users">–</div><div class="label">Users</div></div>
+    <div class="stat-card"><div class="value" id="hs-content">–</div><div class="label">Content Items</div></div>
+    <div class="stat-card"><div class="value" id="hs-subs">–</div><div class="label">Subscriptions</div></div>
+    <div class="stat-card"><div class="value" id="hs-sessions">–</div><div class="label">Streaming Sessions</div></div>
+  </div>
+  <div class="alert alert-info">
+    <strong>Design Patterns used:</strong> Factory Method (Creational) · Facade (Structural) · Strategy (Behavioral) · Singleton (Spring beans)
+  </div>
+</div>
+
+ ╔══════════════════════ AUTH ════════════════════════╗ 
+<div id="page-auth" class="page">
+  <div class="two-col">
+    <div>
+      <h2>Register</h2>
+      <div class="form-box">
+        <div class="form-group"><label>Name</label><input id="reg-name" placeholder="Full name" /></div>
+        <div class="form-group"><label>Email</label><input id="reg-email" type="email" placeholder="email@example.com" /></div>
+        <div class="form-group"><label>Password</label><input id="reg-password" type="password" placeholder="Min 6 chars" /></div>
+        <div class="form-group">
+          <label>Role</label>
+          <select id="reg-role">
+            <option value="VIEWER">Viewer</option>
+            <option value="CONTENT_CREATOR">Content Creator</option>
+            <option value="MODERATOR">Moderator</option>
+            <option value="ADMINISTRATOR">Administrator</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="registerUser()">Register</button>
+        <div id="reg-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+    </div>
+    <div>
+      <h2>Login</h2>
+      <div class="form-box">
+        <div class="form-group"><label>Email</label><input id="login-email" type="email" placeholder="email@example.com" /></div>
+        <div class="form-group"><label>Password</label><input id="login-password" type="password" placeholder="Password" /></div>
+        <button class="btn btn-primary" onclick="loginUser()">Login</button>
+        <div id="login-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+        <div id="login-result" style="margin-top:1rem;display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+ ╔══════════════════════ CONTENT ══════════════════════╗ 
+<div id="page-content" class="page">
+  <div class="two-col section-gap">
+    <div>
+      <h2>Upload Content</h2>
+      <div class="form-box">
+        <div class="form-group"><label>Title</label><input id="ct-title" placeholder="Content title" /></div>
+        <div class="form-group"><label>Creator ID</label><input id="ct-creatorId" type="number" placeholder="Creator user ID" /></div>
+        <div class="form-group"><label>Genre</label><input id="ct-genre" placeholder="e.g. Drama, Action" /></div>
+        <div class="form-group"><label>Duration (min)</label><input id="ct-duration" type="number" placeholder="90" /></div>
+        <div class="form-group"><label>Age Rating</label><input id="ct-age" placeholder="U / U/A 13+ / A" /></div>
+        <div class="form-group"><label>Language</label><input id="ct-lang" placeholder="English" /></div>
+        <div class="form-group"><label>Description</label><textarea id="ct-desc" placeholder="Short synopsis..."></textarea></div>
+        <button class="btn btn-primary" onclick="uploadContent()">Upload & Submit</button>
+        <div id="ct-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+    </div>
+    <div>
+      <h2>Browse Content</h2>
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+        <input id="search-kw" placeholder="Search by title..." style="flex:1;min-width:140px;" />
+        <button class="btn btn-outline" onclick="searchContent()">Search</button>
+        <select id="filter-status" style="width:140px;">
+          <option value="">All Status</option>
+          <option value="PUBLISHED">Published</option>
+          <option value="SUBMITTED">Submitted</option>
+          <option value="UNDER_REVIEW">Under Review</option>
+          <option value="APPROVED">Approved</option>
+          <option value="REJECTED">Rejected</option>
+          <option value="FLAGGED">Flagged</option>
+          <option value="DRAFT">Draft</option>
+        </select>
+        <button class="btn btn-outline" onclick="loadContent()">Filter</button>
+      </div>
+      <div id="content-list"><div id="loading">Loading...</div></div>
+    </div>
+  </div>
+</div>
+
+ ╔══════════════════════ MODERATION ═══════════════════╗ 
+<div id="page-moderation" class="page">
+  <h2>Content Moderation</h2>
+  <div class="two-col">
+    <div>
+      <h3>Submit Review Decision</h3>
+      <div class="form-box">
+        <div class="form-group"><label>Content Title</label><input id="mod-contentTitle" placeholder="Enter content title" /></div>
+        <div class="form-group">
+          <label>Decision</label>
+          <select id="mod-decision">
+            <option value="APPROVED">Approved</option>
+            <option value="REJECTED">Rejected</option>
+            <option value="FLAGGED">Flag Policy Violation</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Comments</label><textarea id="mod-comments" placeholder="Review comments..."></textarea></div>
+        <button class="btn btn-primary" onclick="submitReview()">Submit Review</button>
+        <div id="mod-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+    </div>
+    <div>
+      <h3>Review History</h3>
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem;">
+        <input id="rev-contentTitle" placeholder="Content title" style="flex:1;" />
+        <button class="btn btn-outline" onclick="loadReviews()">Load Reviews</button>
+      </div>
+      <div id="reviews-list"></div>
+    </div>
+  </div>
+</div>
+
+ ╔══════════════════════ SUBSCRIPTIONS ════════════════╗ 
+<div id="page-subscription" class="page">
+  <div class="two-col section-gap">
+    <div>
+      <h2>Available Plans</h2>
+      <div id="plans-list"><div id="loading">Loading...</div></div>
+      <hr/>
+      <h3>Create New Plan (Admin)</h3>
+      <div class="form-box">
+        <div class="form-group"><label>Plan Name</label><input id="plan-name" placeholder="e.g. Premium" /></div>
+        <div class="form-group"><label>Price (₹)</label><input id="plan-price" type="number" step="0.01" /></div>
+        <div class="form-group"><label>Duration (months)</label><input id="plan-duration" type="number" /></div>
+        <button class="btn btn-success" onclick="createPlan()">Create Plan</button>
+        <div id="plan-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+    </div>
+    <div>
+      <h2>Subscribe</h2>
+      <div class="form-box">
+        <div class="form-group"><label>Viewer ID</label><input id="sub-viewerId" type="number" /></div>
+        <div class="form-group"><label>Plan ID</label><input id="sub-planId" type="number" /></div>
+        <div class="form-group"><label>Payment Method</label>
+          <select id="sub-payment"><option value="ONLINE">Online (Card/UPI)</option></select>
+        </div>
+        <button class="btn btn-primary" onclick="subscribe()">Subscribe Now</button>
+        <div id="sub-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+      <hr/>
+      <h3>Check Active Subscription</h3>
+      <div style="display:flex;gap:.5rem;">
+        <input id="check-viewerId" type="number" placeholder="Viewer ID" style="flex:1;" />
+        <button class="btn btn-outline" onclick="checkSub()">Check</button>
+      </div>
+      <div id="sub-result" style="margin-top:1rem;"></div>
+    </div>
+  </div>
+</div>
+
+ ╔══════════════════════ STREAMING ════════════════════╗ 
+<div id="page-streaming" class="page">
+  <div class="two-col section-gap">
+    <div>
+      <h2>Stream Content</h2>
+      <div class="form-box">
+        <div class="form-group"><label>Content Title</label><input id="str-contentTitle" placeholder="Search or paste a title" /></div>
+        <button class="btn btn-primary" onclick="streamContent()">▶ Start Streaming</button>
+        <div id="str-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+      <hr/>
+      <h3>Rate Content</h3>
+      <div class="form-box">
+        <div class="form-group"><label>Content Title</label><input id="rate-contentTitle" placeholder="Enter content title" /></div>
+        <div class="form-group">
+          <label>Rating (1–5)</label>
+          <select id="rate-stars">
+            <option>1</option><option>2</option><option>3</option>
+            <option selected>4</option><option>5</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Comment</label><textarea id="rate-comment" placeholder="Your review..."></textarea></div>
+        <button class="btn btn-warning" onclick="rateContent()">Submit Rating</button>
+        <div id="rate-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+    </div>
+    <div>
+      <h2>Recommendations</h2>
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+        <input id="rec-viewerId" type="number" placeholder="Viewer ID" style="flex:1;min-width:100px;" />
+        <select id="rec-algo" style="width:120px;">
+          <option value="genre">Genre-based</option>
+          <option value="ml">Rating-based (ML)</option>
+        </select>
+        <button class="btn btn-outline" onclick="loadRecommendations()">Get Recs</button>
+      </div>
+      <div id="rec-list"></div>
+      <hr/>
+      <h3>Watch History</h3>
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem;">
+        <input id="hist-viewerId" type="number" placeholder="Viewer ID" style="flex:1;" />
+        <button class="btn btn-outline" onclick="loadHistory()">Load</button>
+      </div>
+      <div id="history-list"></div>
+    </div>
+  </div>
+</div>
+
+ ╔══════════════════════ ADMIN ═════════════════════════╗ 
+<div id="page-admin" class="page">
+  <h2>Admin Dashboard</h2>
+  <div class="stats-grid" id="admin-stats"></div>
+  <div id="admin-content-status" style="margin-bottom:2rem;"></div>
+  <button class="btn btn-outline" onclick="loadAdminDashboard()">↻ Refresh</button>
+</div>
+
+<script>
+const BASE = 'http://localhost:8080/api';
+
+// ── Utilities ─────────────────────────────────────────────────────────────────
+function toast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderColor = isError ? 'var(--red)' : 'var(--accent)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function showAlert(id, msg, isError) {
+  const el = document.getElementById(id);
+  el.className = 'alert ' + (isError ? 'alert-error' : 'alert-success');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'content')      loadContent();
+  if (name === 'subscription') loadPlans();
+  if (name === 'admin')        loadAdminDashboard();
+  if (name === 'home')         loadHomeStats();
+}
+
+function badge(status) {
+  const map = {
+    PUBLISHED:'badge-green', APPROVED:'badge-green', ACTIVE:'badge-green',
+    REJECTED:'badge-red', FLAGGED:'badge-red', CANCELLED:'badge-red',
+    SUBMITTED:'badge-blue', UNDER_REVIEW:'badge-blue', PENDING_PAYMENT:'badge-blue',
+    DRAFT:'badge-gray', INACTIVE:'badge-gray', EXPIRED:'badge-gray',
+    GRACE_PERIOD:'badge-yellow', SUSPENDED:'badge-yellow'
+  };
+  return `<span class="badge ${map[status]||'badge-gray'}">${status}</span>`;
+}
+
+async function api(method, url, body = null) {
+  const opts = { method, headers: {'Content-Type':'application/json'} };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(BASE + url, opts);
+  return res.json();
+}
+
+// ── Home ──────────────────────────────────────────────────────────────────────
+async function loadHomeStats() {
+  const data = await api('GET', '/admin/dashboard');
+  if (data.totalUsers !== undefined) {
+    document.getElementById('hs-users').textContent    = data.totalUsers;
+    document.getElementById('hs-content').textContent  = data.totalContent;
+    document.getElementById('hs-subs').textContent     = data.totalSubscriptions;
+    document.getElementById('hs-sessions').textContent = data.totalStreamingSessions;
+  }
+}
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+async function registerUser() {
+  const body = {
+    name: document.getElementById('reg-name').value,
+    email: document.getElementById('reg-email').value,
+    password: document.getElementById('reg-password').value,
+    userType: document.getElementById('reg-role').value
+  };
+  const data = await api('POST', '/users/register', body);
+  if (data.error) { showAlert('reg-msg', data.error, true); }
+  else { showAlert('reg-msg', `Registered! Role: ${data.userType}`, false); toast('User registered ✓'); }
+}
+
+async function loginUser() {
+  const body = {
+    email:    document.getElementById('login-email').value,
+    password: document.getElementById('login-password').value
+  };
+  const data = await api('POST', '/users/login', body);
+  if (data.error) { showAlert('login-msg', data.error, true); }
+  else {
+    showAlert('login-msg', `Welcome, ${data.name}! Role: ${data.userType}`, false);
+    document.getElementById('login-result').style.display = 'block';
+    document.getElementById('login-result').innerHTML =
+      `<span class="tag">${data.userType}</span> <span class="tag">${data.email}</span>`;
+    toast(`Welcome back, ${data.name}!`);
+  }
+}
+
+// ── Content ───────────────────────────────────────────────────────────────────
+async function uploadContent() {
+  const body = {
+    title: document.getElementById('ct-title').value,
+    creatorId: parseInt(document.getElementById('ct-creatorId').value),
+    genre: document.getElementById('ct-genre').value,
+    duration: parseInt(document.getElementById('ct-duration').value) || 0,
+    ageRating: document.getElementById('ct-age').value,
+    language: document.getElementById('ct-lang').value,
+    description: document.getElementById('ct-desc').value
+  };
+  const data = await api('POST', '/content/upload', body);
+  if (data.error) { showAlert('ct-msg', data.error, true); }
+  else { showAlert('ct-msg', `Content uploaded! Title: ${data.title} | Status: ${data.status}`, false); toast('Content submitted ✓'); }
+}
+
+async function loadContent() {
+  const status = document.getElementById('filter-status').value;
+  const url    = status ? `/content?status=${status}` : '/content';
+  const list   = await api('GET', url);
+  renderContentList(list);
+}
+
+async function searchContent() {
+  const kw = document.getElementById('search-kw').value;
+  if (!kw) { loadContent(); return; }
+  const list = await api('GET', `/content/search?keyword=${encodeURIComponent(kw)}`);
+  renderContentList(list);
+}
+
+function renderContentList(items) {
+  const el = document.getElementById('content-list');
+  if (!items || items.length === 0) { el.innerHTML = '<p style="color:var(--muted)">No content found.</p>'; return; }
+  el.innerHTML = `<div class="grid">${items.map(c => `
+    <div class="card">
+      <div class="title">${c.title}</div>
+      <div class="meta">
+        ${c.metadata ? `${c.metadata.genre||''} · ${c.metadata.duration||0}min` : ''}
+      </div>
+      ${badge(c.status)}
+      <div class="actions" style="margin-top:.8rem;">
+        ${c.status === 'APPROVED' ?
+          `<button class="btn btn-sm btn-success" onclick="publishContent(${c.contentId})">Publish</button>` : ''}
+        ${c.status === 'REJECTED' ?
+          `<button class="btn btn-sm btn-warning" onclick="resubmitContent(${c.contentId})">Resubmit</button>` : ''}
+        ${c.status === 'PUBLISHED' ?
+          `<button class="btn btn-sm btn-danger" onclick="archiveContent(${c.contentId})">Archive</button>` : ''}
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+async function publishContent(id)  { const d = await api('POST', `/content/${id}/publish`);  toast(d.error || `Published: ${d.title}`); loadContent(); }
+async function archiveContent(id)  { const d = await api('POST', `/content/${id}/archive`);  toast(d.error || `Archived: ${d.title}`); loadContent(); }
+async function resubmitContent(id) { const d = await api('POST', `/content/${id}/resubmit`); toast(d.error || `Resubmitted: ${d.title}`); loadContent(); }
+
+// ── Moderation ────────────────────────────────────────────────────────────────
+async function submitReview() {
+  const body = {
+    contentTitle: document.getElementById('mod-contentTitle').value,
+    moderatorId:  CU?.userId,
+    decision:     document.getElementById('mod-decision').value,
+    comments:     document.getElementById('mod-comments').value
+  };
+  const data = await api('POST', '/moderation/review', body);
+  if (data.error) { showAlert('mod-msg', data.error, true); }
+  else { showAlert('mod-msg', `Review recorded! Decision: ${data.decision}`, false); toast('Review submitted ✓'); }
+}
+
+async function loadReviews() {
+  const title = document.getElementById('rev-contentTitle').value.trim();
+  if (!title) { showAlert('mod-msg', 'Enter content title.', true); return; }
+  const matches = await api('GET', `/content/search?keyword=${encodeURIComponent(title)}`);
+  const content = Array.isArray(matches) && matches.length ? matches[0] : null;
+  if (!content) { showAlert('mod-msg', 'Content not found using that title.', true); return; }
+  const list = await api('GET', `/moderation/content/${content.contentId}`);
+  const el   = document.getElementById('reviews-list');
+  if (!list || list.length === 0) { el.innerHTML = '<p style="color:var(--muted)">No reviews found.</p>'; return; }
+  el.innerHTML = list.map(r => `
+    <div class="card" style="margin-bottom:.8rem;">
+      <div>${badge(r.decision)} <span style="font-size:.8rem;color:var(--muted)"> by ${r.moderator||'?'}</span></div>
+      <p style="margin-top:.5rem;font-size:.85rem;">${r.comments||'–'}</p>
+    </div>`).join('');
+}
+
+// ── Subscriptions ─────────────────────────────────────────────────────────────
+async function loadPlans() {
+  const plans = await api('GET', '/subscriptions/plans');
+  const el    = document.getElementById('plans-list');
+  if (!plans || plans.length === 0) { el.innerHTML = '<p style="color:var(--muted)">No plans yet.</p>'; return; }
+  el.innerHTML = `<div class="grid">${plans.map(p => `
+    <div class="card">
+      <div class="title">${p.name}</div>
+      <div class="meta">₹${p.price} / ${p.duration} month(s)</div>
+      <span class="tag">ID: ${p.planId}</span>
+      <div class="actions" style="margin-top:.8rem;">
+        <button class="btn btn-sm btn-danger" onclick="deletePlan(${p.planId})">Delete</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+async function createPlan() {
+  const body = {
+    name:     document.getElementById('plan-name').value,
+    price:    parseFloat(document.getElementById('plan-price').value),
+    duration: parseInt(document.getElementById('plan-duration').value)
+  };
+  const data = await api('POST', '/subscriptions/plans', body);
+  if (data.error) { showAlert('plan-msg', data.error, true); }
+  else { showAlert('plan-msg', `Plan created: ${data.name} (ID: ${data.planId})`, false); toast('Plan created ✓'); loadPlans(); }
+}
+
+async function deletePlan(id) {
+  await api('DELETE', `/subscriptions/plans/${id}`);
+  toast('Plan deleted'); loadPlans();
+}
+
+async function subscribe() {
+  const body = {
+    viewerId:      parseInt(document.getElementById('sub-viewerId').value),
+    planId:        parseInt(document.getElementById('sub-planId').value),
+    paymentMethod: document.getElementById('sub-payment').value
+  };
+  const data = await api('POST', '/subscriptions/subscribe', body);
+  if (data.error) { showAlert('sub-msg', data.error, true); }
+  else { showAlert('sub-msg', `Subscribed! Status: ${data.status} | Expires: ${data.endDate}`, false); toast('Subscription active ✓'); }
+}
+
+async function checkSub() {
+  const id   = document.getElementById('check-viewerId').value;
+  const data = await api('GET', `/subscriptions/viewer/${id}/active`);
+  const el   = document.getElementById('sub-result');
+  if (data.error) { el.innerHTML = `<div class="alert alert-error">${data.error}</div>`; return; }
+  el.innerHTML = `<div class="card">
+    ${badge(data.status)}
+    <div class="meta" style="margin-top:.5rem;">Plan: ${data.plan?.name} | Expires: ${data.endDate}</div>
+    <button class="btn btn-sm btn-danger" style="margin-top:.5rem;" onclick="cancelSub(${data.subscriptionId})">Cancel</button>
+    <button class="btn btn-sm btn-warning" style="margin-top:.5rem;" onclick="renewSub(${data.subscriptionId})">Renew</button>
+  </div>`;
+}
+
+async function cancelSub(id) { const d = await api('POST', `/subscriptions/${id}/cancel`); toast(d.error || 'Cancelled'); checkSub(); }
+async function renewSub(id)  { const d = await api('POST', `/subscriptions/${id}/renew`);  toast(d.error || 'Renewed ✓'); checkSub(); }
+
+// ── Streaming ─────────────────────────────────────────────────────────────────
+async function streamContent() {
+  const vid = document.getElementById('str-viewerId').value;
+  const cid = document.getElementById('str-contentId').value;
+  const data = await api('POST', `/stream/watch?viewerId=${vid}&contentId=${cid}`);
+  if (data.error) { showAlert('str-msg', data.error, true); }
+  else { showAlert('str-msg', `▶ Streaming started! Last watched: ${data.watchHistory?.lastWatchedDate}`, false); toast('Streaming ▶'); }
+}
+
+async function rateContent() {
+  const body = {
+    viewerId: parseInt(document.getElementById('rate-viewerId').value),
+    rating:   parseInt(document.getElementById('rate-stars').value),
+    comment:  document.getElementById('rate-comment').value
+  };
+  const cid  = document.getElementById('rate-contentId').value;
+  const data = await api('POST', `/stream/content/${cid}/rate`, body);
+  if (data.error) { showAlert('rate-msg', data.error, true); }
+  else { showAlert('rate-msg', `Rating saved: ${'★'.repeat(data.rating)}`, false); toast('Rating saved ✓'); }
+}
+
+async function loadRecommendations() {
+  const vid   = document.getElementById('rec-viewerId').value;
+  const algo  = document.getElementById('rec-algo').value;
+  const data  = await api('GET', `/stream/recommendations/${vid}?algorithm=${algo}`);
+  const el    = document.getElementById('rec-list');
+  if (data.error) { el.innerHTML = `<div class="alert alert-error">${data.error}</div>`; return; }
+  const recs  = data.recommendations || [];
+  if (recs.length === 0) { el.innerHTML = '<p style="color:var(--muted)">No recommendations yet.</p>'; return; }
+  el.innerHTML = `<div class="grid">${recs.map(c => `
+    <div class="card">
+      <div class="title">${c.title}</div>
+      <div class="meta">${c.metadata?.genre||''} · ${c.metadata?.language||''}</div>
+      ${badge(c.status)}
+    </div>`).join('')}</div>`;
+}
+
+async function loadHistory() {
+  const vid  = document.getElementById('hist-viewerId').value;
+  const list = await api('GET', `/stream/history/${vid}`);
+  const el   = document.getElementById('history-list');
+  if (!list || list.length === 0) { el.innerHTML = '<p style="color:var(--muted)">No history yet.</p>'; return; }
+  el.innerHTML = list.map(h => `
+    <div style="padding:.4rem 0;border-bottom:1px solid #2a2a3a;font-size:.88rem;">
+      🎬 <strong>${h.content?.title||'Content '+h.content?.contentId}</strong>
+      <span style="color:var(--muted);margin-left:.5rem;">${h.lastWatchedDate}</span>
+    </div>`).join('');
+}
+
+// ── Admin ─────────────────────────────────────────────────────────────────────
+async function loadAdminDashboard() {
+  const data = await api('GET', '/admin/dashboard');
+  const el   = document.getElementById('admin-stats');
+  if (data.error) { el.innerHTML = `<div class="alert alert-error">${data.error}</div>`; return; }
+  el.innerHTML = [
+    ['totalUsers','Users'],['totalContent','Content'],
+    ['totalSubscriptions','Subscriptions'],['totalStreamingSessions','Stream Sessions'],
+    ['totalRatings','Ratings']
+  ].map(([k,l]) => `<div class="stat-card"><div class="value">${data[k]??0}</div><div class="label">${l}</div></div>`).join('');
+
+  const cs = data.contentByStatus || {};
+  document.getElementById('admin-content-status').innerHTML =
+    `<h3 style="margin-bottom:.8rem;">Content by Status</h3>
+     <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
+       ${Object.entries(cs).map(([s,n]) => `${badge(s)} <span style="font-size:.85rem;margin-right:.5rem;">× ${n}</span>`).join('')}
+     </div>`;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+loadHomeStats();
+</script>
+</body>
+</html>
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OTT Platform – J11</title>
+  <style>
+    :root {
+      --bg:#0f0f13;--surface:#1a1a24;--card:#22222f;
+      --accent:#6c63ff;--accent2:#ff6584;
+      --text:#e8e8f0;--muted:#8888aa;
+      --green:#42d392;--red:#ff6584;--yellow:#ffd166;
+      --radius:10px;--font:'Segoe UI',system-ui,sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
+
+    nav{background:var(--surface);display:flex;align-items:center;
+        padding:0 2rem;height:60px;gap:.6rem;border-bottom:1px solid #2a2a3a;
+        position:sticky;top:0;z-index:100;flex-wrap:wrap;}
+    nav .logo{font-size:1.2rem;font-weight:700;color:var(--accent);margin-right:auto;}
+    nav button{background:none;border:none;color:var(--muted);cursor:pointer;
+               padding:.4rem .8rem;border-radius:var(--radius);font-size:.88rem;transition:all .2s;}
+    nav button:hover,nav button.active{background:var(--accent);color:#fff;}
+    #user-info{font-size:.82rem;color:var(--muted);white-space:nowrap;}
+    #user-info span.uname{color:var(--accent);font-weight:600;}
+    #btn-logout{background:var(--red)!important;color:#fff!important;font-size:.8rem!important;padding:.35rem .8rem!important;}
+
+    /* Login gate */
+    #login-gate{display:flex;align-items:center;justify-content:center;
+                min-height:calc(100vh - 60px);padding:2rem;}
+    .auth-card{background:var(--card);border-radius:var(--radius);padding:2.5rem;
+               width:100%;max-width:420px;border:1px solid #2a2a3a;}
+    .auth-card h2{color:var(--accent);margin-bottom:1.5rem;font-size:1.4rem;}
+    .auth-tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;}
+    .auth-tab{flex:1;padding:.5rem;border:1px solid #2a2a3a;border-radius:6px;
+              background:none;color:var(--muted);cursor:pointer;font-size:.9rem;transition:all .2s;}
+    .auth-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+    .page{display:none;padding:2rem;max-width:1100px;margin:0 auto;}
+    .page.active{display:block;}
+    h2{font-size:1.4rem;margin-bottom:1.5rem;color:var(--accent);}
+    h3{font-size:1.05rem;margin-bottom:.8rem;color:var(--text);}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.2rem;}
+    .card{background:var(--card);border-radius:var(--radius);padding:1.2rem;
+          border:1px solid #2a2a3a;transition:border-color .2s;}
+    .card:hover{border-color:var(--accent);}
+    .card .title{font-weight:600;margin-bottom:.4rem;}
+    .card .meta{font-size:.8rem;color:var(--muted);margin-bottom:.8rem;}
+    .card .actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem;}
+
+    .badge{display:inline-block;padding:.2rem .6rem;border-radius:99px;font-size:.75rem;font-weight:600;}
+    .badge-green {background:#42d39220;color:var(--green);}
+    .badge-red   {background:#ff658420;color:var(--red);}
+    .badge-yellow{background:#ffd16620;color:var(--yellow);}
+    .badge-blue  {background:#6c63ff20;color:var(--accent);}
+    .badge-gray  {background:#88888820;color:var(--muted);}
+
+    .role-badge{display:inline-block;padding:.15rem .55rem;border-radius:99px;
+                font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
+    .role-VIEWER          {background:#42d39220;color:var(--green);}
+    .role-CONTENT_CREATOR {background:#6c63ff20;color:var(--accent);}
+    .role-MODERATOR       {background:#ffd16620;color:var(--yellow);}
+    .role-ADMINISTRATOR   {background:#ff658420;color:var(--red);}
+
+    .form-box{background:var(--card);border-radius:var(--radius);
+              padding:2rem;max-width:480px;border:1px solid #2a2a3a;}
+    .form-group{margin-bottom:1rem;}
+    label{display:block;font-size:.83rem;color:var(--muted);margin-bottom:.3rem;}
+    input,select,textarea{width:100%;background:var(--surface);border:1px solid #2a2a3a;
+      color:var(--text);border-radius:6px;padding:.55rem .8rem;font-size:.9rem;
+      outline:none;transition:border-color .2s;font-family:var(--font);}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+    textarea{resize:vertical;min-height:80px;}
+
+    .btn{padding:.55rem 1.1rem;border-radius:6px;border:none;cursor:pointer;
+         font-size:.88rem;font-weight:600;transition:opacity .2s;}
+    .btn:hover{opacity:.85;}
+    .btn-primary{background:var(--accent);color:#fff;}
+    .btn-success{background:var(--green);color:#0f0f13;}
+    .btn-danger {background:var(--red);color:#fff;}
+    .btn-warning{background:var(--yellow);color:#0f0f13;}
+    .btn-outline{background:none;border:1px solid var(--accent);color:var(--accent);}
+    .btn-sm{padding:.3rem .7rem;font-size:.8rem;}
+
+    .alert{padding:.8rem 1rem;border-radius:6px;margin-bottom:1rem;font-size:.9rem;}
+    .alert-success{background:#42d39220;color:var(--green);border:1px solid #42d39240;}
+    .alert-error  {background:#ff658420;color:var(--red);  border:1px solid #ff658440;}
+    .alert-info   {background:#6c63ff20;color:var(--accent);border:1px solid #6c63ff40;}
+
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1rem;margin-bottom:2rem;}
+    .stat-card{background:var(--card);border-radius:var(--radius);padding:1.2rem;
+               text-align:center;border:1px solid #2a2a3a;}
+    .stat-card .value{font-size:2rem;font-weight:700;color:var(--accent);}
+    .stat-card .label{font-size:.78rem;color:var(--muted);margin-top:.3rem;}
+
+    #toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--surface);
+           border:1px solid var(--accent);color:var(--text);padding:.8rem 1.2rem;
+           border-radius:var(--radius);font-size:.9rem;display:none;z-index:9999;
+           box-shadow:0 4px 20px #0006;max-width:320px;}
+    #toast.show{display:block;animation:fadein .3s;}
+    @keyframes fadein{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:2rem;}
+    @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+    hr{border:none;border-top:1px solid #2a2a3a;margin:1.5rem 0;}
+    .tag{display:inline-block;background:#2a2a3a;color:var(--muted);border-radius:4px;
+         padding:.15rem .5rem;font-size:.75rem;margin:.1rem;}
+    .empty{color:var(--muted);font-size:.9rem;padding:.8rem 0;}
+
+    .welcome-banner{background:var(--card);border-radius:var(--radius);
+                    padding:1.2rem 1.8rem;margin-bottom:2rem;border:1px solid #2a2a3a;
+                    display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+    .welcome-banner .avatar{width:44px;height:44px;border-radius:50%;background:var(--accent);
+      display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;
+      color:#fff;flex-shrink:0;}
+    .welcome-banner .info h3{margin-bottom:.2rem;font-size:1rem;}
+    .welcome-banner .info p{font-size:.82rem;color:var(--muted);}
+  </style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <span class="logo">▶ OTT Platform</span>
+  <div id="nav-dynamic" style="display:flex;gap:.4rem;"></div>
+  <span id="user-info" style="display:none;"></span>
+  <button id="btn-logout" style="display:none;" onclick="logout()">Logout</button>
+</nav>
+
+<div id="toast"></div>
+
+<!-- ══ LOGIN GATE ═══════════════════════════════════════════════════ -->
+<div id="login-gate">
+  <div class="auth-card">
+    <h2>▶ OTT Platform</h2>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login"    onclick="switchTab('login')">Login</button>
+      <button class="auth-tab"        id="tab-register" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <div id="auth-login">
+      <div class="form-group"><label>Email</label>
+        <input id="l-email" type="email" placeholder="email@example.com" /></div>
+      <div class="form-group"><label>Password</label>
+        <input id="l-password" type="password" placeholder="Password"
+               onkeydown="if(event.key==='Enter')doLogin()" /></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:.5rem;" onclick="doLogin()">Login</button>
+      <div id="l-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+    </div>
+
+    <div id="auth-register" style="display:none;">
+      <div class="form-group"><label>Full Name</label>
+        <input id="r-name" placeholder="Your name" /></div>
+      <div class="form-group"><label>Email</label>
+        <input id="r-email" type="email" placeholder="email@example.com" /></div>
+      <div class="form-group"><label>Password</label>
+        <input id="r-password" type="password" placeholder="Min 6 characters" /></div>
+      <div class="form-group"><label>Role</label>
+        <select id="r-role">
+          <option value="VIEWER">Viewer – watch & subscribe</option>
+          <option value="CONTENT_CREATOR">Content Creator – upload content</option>
+          <option value="MODERATOR">Moderator – review content</option>
+          <option value="ADMINISTRATOR">Administrator – manage system</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:.5rem;" onclick="doRegister()">Create Account</button>
+      <div id="r-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VIEWER: Browse & Stream ════════════════════════════════════ -->
+<div id="page-stream" class="page">
+  <div class="welcome-banner" id="wb-stream"></div>
+  <div class="two-col">
+    <div>
+      <h2>Browse Published Content</h2>
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+        <input id="browse-kw" placeholder="Search by title…" style="flex:1;min-width:120px;"
+               onkeydown="if(event.key==='Enter')browseSearch()" />
+        <button class="btn btn-outline btn-sm" onclick="browseSearch()">Search</button>
+        <button class="btn btn-outline btn-sm" onclick="browseLoad()">All</button>
+      </div>
+      <div id="browse-list"><p class="empty">Loading…</p></div>
+    </div>
+    <div>
+      <h2>▶ Stream</h2>
+      <div class="form-box" style="margin-bottom:1.5rem;">
+        <div class="form-group"><label>Content Title</label>
+          <input id="str-contentTitle" placeholder="Click ▶ on a card or enter title" /></div>
+        <button class="btn btn-primary" onclick="doStream()">▶ Start Streaming</button>
+        <div id="str-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+      <h3>Rate Content</h3>
+      <div class="form-box" style="margin-bottom:1.5rem;">
+        <div class="form-group"><label>Content Title</label>
+          <input id="rate-contentTitle" placeholder="Enter content title" /></div>
+        <div class="form-group"><label>Rating</label>
+          <select id="rate-stars">
+            <option>1</option><option>2</option><option>3</option>
+            <option selected>4</option><option>5</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Comment</label>
+          <textarea id="rate-comment" placeholder="Your thoughts…"></textarea></div>
+        <button class="btn btn-warning" onclick="doRate()">Submit Rating</button>
+        <div id="rate-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+      <h3>Watch History</h3>
+      <button class="btn btn-outline btn-sm" onclick="loadHistory()" style="margin-bottom:.8rem;">Load History</button>
+      <div id="history-list"></div>
+    </div>
+  </div>
+  <hr/>
+  <h2>Recommendations</h2>
+  <div style="display:flex;gap:.5rem;margin-bottom:1rem;">
+    <select id="rec-algo" style="width:180px;">
+      <option value="genre">Genre-based</option>
+      <option value="ml">Rating-based (ML)</option>
+    </select>
+    <button class="btn btn-outline" onclick="loadRecs()">Get Recommendations</button>
+  </div>
+  <div id="rec-list"></div>
+</div>
+
+<!-- ══ VIEWER: Subscriptions ═════════════════════════════════════ -->
+<div id="page-subscription" class="page">
+  <div class="welcome-banner" id="wb-sub"></div>
+  <div class="two-col">
+    <div>
+      <h2>Available Plans</h2>
+      <div id="plans-list"><p class="empty">Loading…</p></div>
+    </div>
+    <div>
+      <h2>Subscribe</h2>
+      <div class="form-box">
+        <div class="form-group" style="display:none;">
+          <input id="sub-planId" type="hidden" /></div>
+        <div class="form-group"><label>Selected Plan</label>
+          <div id="sub-planName" style="color:var(--muted);">Choose a plan above to subscribe.</div></div>
+        <div class="form-group"><label>Payment Method</label>
+          <select id="sub-pay"><option value="ONLINE">Online (Card / UPI)</option></select></div>
+        <button class="btn btn-primary" onclick="doSubscribe()">Subscribe Now</button>
+        <div id="sub-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+      <hr/>
+      <h3>My Active Subscription</h3>
+      <div id="sub-status"><p class="empty">Click refresh to check.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONTENT CREATOR ════════════════════════════════════════════ -->
+<div id="page-creator" class="page">
+  <div class="welcome-banner" id="wb-creator"></div>
+  <div class="two-col">
+    <div>
+      <h2>Upload New Content</h2>
+      <div class="form-box">
+        <div class="form-group"><label>Title *</label>
+          <input id="ct-title" placeholder="Content title" /></div>
+        <div class="form-group"><label>Genre</label>
+          <input id="ct-genre" placeholder="Drama, Action, Comedy…" /></div>
+        <div class="form-group"><label>Duration (minutes)</label>
+          <input id="ct-dur" type="number" placeholder="90" /></div>
+        <div class="form-group"><label>Age Rating</label>
+          <input id="ct-age" placeholder="U / U/A 13+ / A" /></div>
+        <div class="form-group"><label>Language</label>
+          <input id="ct-lang" placeholder="English" /></div>
+        <input id="ct-resubmitId" type="hidden" />
+        <div class="form-group"><label>Description</label>
+          <textarea id="ct-desc" placeholder="Brief synopsis…"></textarea></div>
+        <button class="btn btn-primary" id="ct-submit-btn" onclick="doUpload()">Upload &amp; Submit for Review</button>
+        <div id="ct-note" class="alert alert-info" style="margin-top:1rem;display:none;"></div>
+        <div id="ct-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+    </div>
+    <div>
+      <h2>My Uploaded Content</h2>
+      <button class="btn btn-outline btn-sm" onclick="loadMyContent()" style="margin-bottom:1rem;">↻ Refresh</button>
+      <div id="my-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODERATOR ══════════════════════════════════════════════════ -->
+<div id="page-moderation" class="page">
+  <div class="welcome-banner" id="wb-mod"></div>
+  <div class="two-col">
+    <div>
+      <h2>Pending Review Queue</h2>
+      <button class="btn btn-outline btn-sm" onclick="loadPending()" style="margin-bottom:1rem;">↻ Refresh</button>
+      <div id="pending-list"><p class="empty">Click Refresh to load pending content.</p></div>
+    </div>
+    <div>
+      <h2>Submit Decision</h2>
+      <div class="form-box">
+        <input id="mod-contentId" type="hidden" />
+        <input id="mod-contentTitle" type="hidden" />
+        <div class="form-group"><label>Content</label>
+          <input id="mod-selected-title" readonly placeholder="Select a item from the queue" /></div>
+        <div class="form-group"><label>Decision</label>
+          <select id="mod-dec">
+            <option value="APPROVED">✅ Approve</option>
+            <option value="REJECTED">❌ Reject</option>
+            <option value="FLAGGED">🚩 Flag Policy Violation</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Comments</label>
+          <textarea id="mod-comments" placeholder="Provide feedback to the creator…"></textarea></div>
+        <button class="btn btn-primary" onclick="doReview()">Submit Review</button>
+        <div id="mod-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+      <hr/>
+      <h3>My Review History</h3>
+      <button class="btn btn-outline btn-sm" onclick="loadMyReviews()" style="margin-bottom:.8rem;">Load</button>
+      <div id="my-reviews"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMINISTRATOR ══════════════════════════════════════════════ -->
+<div id="page-admin" class="page">
+  <div class="welcome-banner" id="wb-admin"></div>
+  <h2>System Dashboard</h2>
+  <div class="stats-grid" id="admin-stats"></div>
+  <div id="admin-status-breakdown" style="margin-bottom:2rem;"></div>
+  <hr/>
+  <div class="two-col">
+    <div>
+      <h3>Subscription Plans</h3>
+      <div id="admin-plans" style="margin-bottom:1rem;"></div>
+      <div class="form-box">
+        <h3 style="margin-bottom:1rem;">Create New Plan</h3>
+        <div class="form-group"><label>Name</label>
+          <input id="ap-name" placeholder="e.g. Premium" /></div>
+        <div class="form-group"><label>Price (₹)</label>
+          <input id="ap-price" type="number" step="0.01" /></div>
+        <div class="form-group"><label>Duration (months)</label>
+          <input id="ap-dur" type="number" /></div>
+        <button class="btn btn-success" onclick="adminCreatePlan()">Create Plan</button>
+        <div id="ap-msg" class="alert" style="margin-top:1rem;display:none;"></div>
+      </div>
+    </div>
+    <div>
+      <h3>All Registered Users</h3>
+      <button class="btn btn-outline btn-sm" onclick="loadUsers()" style="margin-bottom:1rem;">↻ Load Users</button>
+      <div id="admin-users"></div>
+      <hr/>
+      <h3>Revenue Report</h3>
+      <button class="btn btn-outline btn-sm" onclick="loadRevenue()">Load Report</button>
+      <div id="revenue-result" style="margin-top:.8rem;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BASE = 'http://localhost:8080/api';
+let CU = null; // current user
+
+// ── Restore session on reload ─────────────────────────────────────
+(function(){
+  const s = sessionStorage.getItem('ottUser');
+  if(s){ CU = JSON.parse(s); applyRole(); }
+})();
+
+// ── Helpers ───────────────────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const q  = sel => document.querySelector(sel);
+
+async function api(method, url, body=null){
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(body) opts.body=JSON.stringify(body);
+  const r = await fetch(BASE+url, opts);
+  return r.json();
+}
+
+function toast(msg, err=false){
+  const t=$('toast'); t.textContent=msg;
+  t.style.borderColor=err?'var(--red)':'var(--accent)';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+function msg(id, text, err){
+  const el=$(id);
+  el.className='alert '+(err?'alert-error':'alert-success');
+  el.textContent=text; el.style.display='block';
+  setTimeout(()=>el.style.display='none',5000);
+}
+
+function badge(s){
+  const m={PUBLISHED:'badge-green',APPROVED:'badge-green',ACTIVE:'badge-green',
+           REJECTED:'badge-red',FLAGGED:'badge-red',CANCELLED:'badge-red',
+           SUBMITTED:'badge-blue',UNDER_REVIEW:'badge-blue',PENDING_PAYMENT:'badge-blue',
+           DRAFT:'badge-gray',INACTIVE:'badge-gray',EXPIRED:'badge-gray',
+           GRACE_PERIOD:'badge-yellow',SUSPENDED:'badge-yellow'};
+  return `<span class="badge ${m[s]||'badge-gray'}">${s.replace(/_/g,' ')}</span>`;
+}
+
+function wb(id, icon){
+  if(!CU) return;
+  $(id).innerHTML=`
+    <div class="avatar">${CU.name[0].toUpperCase()}</div>
+    <div class="info">
+      <h3>${icon} Welcome, ${CU.name}!</h3>
+      <p><span class="role-badge role-${CU.userType}">${CU.userType.replace(/_/g,' ')}</span></p>
+    </div>`;
+}
+
+// ── Auth ──────────────────────────────────────────────────────────
+function switchTab(t){
+  $('auth-login').style.display    = t==='login'    ?'block':'none';
+  $('auth-register').style.display = t==='register' ?'block':'none';
+  $('tab-login').classList.toggle('active',    t==='login');
+  $('tab-register').classList.toggle('active', t==='register');
+}
+
+async function doRegister(){
+  const body={
+    name:    $('r-name').value.trim(),
+    email:   $('r-email').value.trim(),
+    password:$('r-password').value,
+    userType:$('r-role').value
+  };
+  if(!body.name||!body.email||!body.password){msg('r-msg','Fill in all fields.',true);return;}
+  const d = await api('POST','/users/register',body);
+  if(d.error){ msg('r-msg',d.error,true); }
+  else{ msg('r-msg','Account created! You can now login.',false); toast('Registered ✓'); setTimeout(()=>switchTab('login'),1500); }
+}
+
+async function doLogin(){
+  const email=$('l-email').value.trim(), password=$('l-password').value;
+  if(!email||!password){ msg('l-msg','Enter email and password.',true); return; }
+  const d = await api('POST','/users/login',{email,password});
+  if(d.error){ msg('l-msg',d.error,true); return; }
+  CU=d; sessionStorage.setItem('ottUser',JSON.stringify(CU));
+  toast(`Welcome, ${CU.name}!`);
+  applyRole();
+}
+
+function logout(){
+  CU=null; sessionStorage.removeItem('ottUser');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  $('nav-dynamic').innerHTML='';
+  $('user-info').style.display='none';
+  $('btn-logout').style.display='none';
+  $('login-gate').style.display='flex';
+  $('l-email').value=''; $('l-password').value='';
+  toast('Logged out');
+}
+
+// ── Role-based routing ────────────────────────────────────────────
+function applyRole(){
+  $('login-gate').style.display='none';
+  $('user-info').style.display='inline';
+  $('user-info').innerHTML=
+    `<span class="uname">${CU.name}</span>
+     &nbsp;<span class="role-badge role-${CU.userType}">${CU.userType.replace(/_/g,' ')}</span>`;
+  $('btn-logout').style.display='inline-block';
+
+  const nav=$('nav-dynamic'); nav.innerHTML='';
+  let first='';
+
+  if(CU.userType==='VIEWER'){
+    nav.innerHTML=`
+      <button id="nav-stream"        onclick="showPage('stream')">Browse &amp; Stream</button>
+      <button id="nav-subscription"  onclick="showPage('subscription')">Subscriptions</button>`;
+    first='stream';
+  } else if(CU.userType==='CONTENT_CREATOR'){
+    nav.innerHTML=`<button id="nav-creator" onclick="showPage('creator')">My Content</button>`;
+    first='creator';
+  } else if(CU.userType==='MODERATOR'){
+    nav.innerHTML=`<button id="nav-moderation" onclick="showPage('moderation')">Review Queue</button>`;
+    first='moderation';
+  } else if(CU.userType==='ADMINISTRATOR'){
+    nav.innerHTML=`<button id="nav-admin" onclick="showPage('admin')">Dashboard</button>`;
+    first='admin';
+  }
+  showPage(first);
+}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#nav-dynamic button').forEach(b=>b.classList.remove('active'));
+  const page=$('page-'+name); if(page) page.classList.add('active');
+  const btn=$('nav-'+name);   if(btn)  btn.classList.add('active');
+
+  if(name==='stream')       { wb('wb-stream','🎬'); browseLoad(); }
+  if(name==='subscription') { wb('wb-sub','💳'); loadPlans(); checkMySub(); }
+  if(name==='creator')      { wb('wb-creator','🎥'); loadMyContent(); }
+  if(name==='moderation')   { wb('wb-mod','🔍'); loadPending(); }
+  if(name==='admin')        { wb('wb-admin','⚙️'); loadAdminDashboard(); loadAdminPlans(); }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  VIEWER – Browse & Stream
+// ══════════════════════════════════════════════════════════════════
+async function browseLoad(){
+  const list = await api('GET','/content?status=PUBLISHED');
+  renderBrowse(list);
+}
+async function browseSearch(){
+  const kw=$('browse-kw').value.trim();
+  if(!kw){browseLoad();return;}
+  const list = await api('GET',`/content/search?keyword=${encodeURIComponent(kw)}`);
+  renderBrowse(list.filter(c=>c.status==='PUBLISHED'));
+}
+function renderBrowse(items){
+  const el=$('browse-list');
+  if(!items||!items.length){el.innerHTML='<p class="empty">No published content found.</p>';return;}
+  el.innerHTML=`<div class="grid">${items.map(c=>`
+    <div class="card">
+      <div class="title">${c.title}</div>
+      <div class="meta">
+        ${c.genre||''}${c.duration?' · '+c.duration+'min':''}${c.language?' · '+c.language:''}
+      </div>
+      ${badge(c.status)}
+      <div class="actions">
+        <button class="btn btn-sm btn-primary" data-title="${encodeURIComponent(c.title)}" onclick="quickStream(decodeURIComponent(this.dataset.title))">▶ Stream</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+function quickStream(title){
+  $('str-contentTitle').value = title;
+  doStream();
+}
+async function doStream(){
+  const title = $('str-contentTitle').value.trim();
+  if(!title){msg('str-msg','Enter a content title.',true);return;}
+  const matches = await api('GET', `/content/search?keyword=${encodeURIComponent(title)}`);
+  const content = Array.isArray(matches) && matches.length ? matches[0] : null;
+  if(!content){msg('str-msg','Content title not found.',true);return;}
+  const d=await api('POST',`/stream/watch?viewerId=${CU.userId}&contentId=${content.contentId}`);
+  if(d.error) msg('str-msg',d.error,true);
+  else{ msg('str-msg',`▶ Streaming! Last watched: ${d.watchHistory?.lastWatchedDate}`,false); toast('Streaming ▶'); }
+}
+async function doRate(){
+  const title=$('rate-contentTitle').value.trim();
+  if(!title){msg('rate-msg','Enter a content title.',true);return;}
+  const d=await api('POST','/stream/rate',{
+    viewerId:CU.userId,
+    contentTitle:title,
+    rating:parseInt($('rate-stars').value),
+    comment:$('rate-comment').value
+  });
+  if(d.error) msg('rate-msg',d.error,true);
+  else{ msg('rate-msg',`Rating saved: ${'★'.repeat(d.rating)}`,false); toast('Rating saved ✓'); }
+}
+async function loadHistory(){
+  const list=await api('GET',`/stream/history/${CU.userId}`);
+  const el=$('history-list');
+  if(!list||!list.length){el.innerHTML='<p class="empty">No history yet.</p>';return;}
+  el.innerHTML=list.map(h=>`
+    <div style="padding:.4rem 0;border-bottom:1px solid #2a2a3a;font-size:.84rem;">
+      🎬 <strong>${h.content?.title||'Unknown content'}</strong>
+      <span style="color:var(--muted);margin-left:.5rem;">${h.lastWatchedDate}</span>
+    </div>`).join('');
+}
+async function loadRecs(){
+  const algo=$('rec-algo').value;
+  const d=await api('GET',`/stream/recommendations/${CU.userId}?algorithm=${algo}`);
+  const el=$('rec-list');
+  if(d.error){el.innerHTML=`<div class="alert alert-error">${d.error}</div>`;return;}
+  const recs=d.recommendations||[];
+  if(!recs.length){el.innerHTML='<p class="empty">No recommendations yet — stream some content first!</p>';return;}
+  el.innerHTML=`<div class="grid">${recs.map(c=>`
+    <div class="card">
+      <div class="title">${c.title}</div>
+      <div class="meta">${c.genre||''}${c.language?' · '+c.language:''}</div>
+      ${badge(c.status)}
+      <div class="actions">
+        <button class="btn btn-sm btn-primary" data-title="${encodeURIComponent(c.title)}" onclick="quickStream(decodeURIComponent(this.dataset.title))">▶ Stream</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  VIEWER – Subscriptions
+// ══════════════════════════════════════════════════════════════════
+async function loadPlans(){
+  const plans=await api('GET','/subscriptions/plans');
+  const el=$('plans-list');
+  if(!plans||!plans.length){el.innerHTML='<p class="empty">No plans available yet.</p>';return;}
+  el.innerHTML=`<div class="grid">${plans.map(p=>`
+    <div class="card">
+      <div class="title">${p.name}</div>
+      <div class="meta">₹${p.price} &nbsp;/&nbsp; ${p.duration} month(s)</div>
+      <div class="actions">
+        <button class="btn btn-sm btn-primary" onclick="quickSub(${p.planId})">Subscribe</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+function quickSub(id){
+  $('sub-planId').value=id;
+  const planName = document.querySelector(`#plans-list button[onclick*="${id}"]`)?.closest('.card')?.querySelector('.title')?.textContent;
+  if(planName){ $('sub-planName').textContent = `Selected: ${planName}`; }
+  doSubscribe();
+}
+async function doSubscribe(){
+  const planId=$('sub-planId').value;
+  if(!planId){msg('sub-msg','Select a plan.',true);return;}
+  const d=await api('POST','/subscriptions/subscribe',{
+    viewerId:CU.userId,planId:parseInt(planId),paymentMethod:$('sub-pay').value
+  });
+  if(d.error) msg('sub-msg',d.error,true);
+  else{ msg('sub-msg',`✅ Subscribed! Valid until: ${d.endDate}`,false); toast('Subscription active ✓'); checkMySub(); }
+}
+async function checkMySub(){
+  const d=await api('GET',`/subscriptions/viewer/${CU.userId}/active`);
+  const el=$('sub-status');
+  if(d.error){el.innerHTML='<p class="empty">No active subscription.</p>';return;}
+  el.innerHTML=`<div class="card">
+    ${badge(d.status)}
+    <div class="meta" style="margin-top:.5rem;">
+      Plan: <strong>${d.plan?.name}</strong> &nbsp;|&nbsp; Expires: <strong>${d.endDate}</strong>
+    </div>
+    <div class="actions">
+      <button class="btn btn-sm btn-warning" onclick="doRenew(${d.subscriptionId})">↻ Renew</button>
+      <button class="btn btn-sm btn-danger"  onclick="doCancel(${d.subscriptionId})">Cancel</button>
+    </div>
+  </div>`;
+}
+async function doCancel(id){
+  if(!confirm('Cancel your subscription?'))return;
+  const d=await api('POST',`/subscriptions/${id}/cancel`);
+  toast(d.error||'Cancelled'); checkMySub();
+}
+async function doRenew(id){
+  const d=await api('POST',`/subscriptions/${id}/renew`);
+  toast(d.error||'Renewed ✓'); checkMySub();
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  CONTENT CREATOR
+// ══════════════════════════════════════════════════════════════════
+async function doUpload(){
+  if (!CU?.userId) { msg('ct-msg','You must be logged in as a content creator first.',true); return; }
+  const title=$('ct-title').value.trim();
+  if(!title){msg('ct-msg','Title is required.',true);return;}
+  const resubmitId = $('ct-resubmitId').value;
+  const body = {
+    title,
+    genre:$('ct-genre').value,
+    duration:parseInt($('ct-dur').value)||0,
+    ageRating:$('ct-age').value,
+    language:$('ct-lang').value,
+    description:$('ct-desc').value
+  };
+
+  let d;
+  if (resubmitId) {
+    d = await api('PUT', `/content/${resubmitId}/resubmit`, body);
+  } else {
+    d = await api('POST','/content/upload',{
+      ...body,
+      creatorId:CU.userId
+    });
+  }
+
+  if(d.error) msg('ct-msg',d.error,true);
+  else{
+    msg('ct-msg',`✅ ${resubmitId ? 'Resubmitted' : 'Submitted'}! Title: ${d.title} | Status: ${d.status}`,false);
+    toast(resubmitId ? 'Content resubmitted for review ✓' : 'Content submitted for review ✓');
+    ['ct-title','ct-genre','ct-dur','ct-age','ct-lang','ct-desc'].forEach(id=>{$(id).value='';});
+    $('ct-resubmitId').value='';
+    $('ct-note').style.display='none';
+    $('ct-submit-btn').textContent='Upload & Submit for Review';
+    loadMyContent();
+  }
+}
+async function loadMyContent(){
+  if (!CU?.userId) {
+    $('my-content').innerHTML = '<p class="empty">Login as a content creator to view uploads.</p>';
+    return;
+  }
+  const list=await api('GET',`/content/creator/${CU.userId}`);
+  const el=$('my-content');
+  if(!list||!list.length){el.innerHTML='<p class="empty">No content uploaded yet.</p>';return;}
+  el.innerHTML=`<div class="grid">${list.map(c=>`
+    <div class="card">
+      <div class="title">${c.title}</div>
+      <div class="meta">${c.genre?' · '+c.genre:''}</div>
+      ${badge(c.status)}
+      <div class="actions">
+        ${(c.status==='REJECTED' || c.status==='FLAGGED')?
+          `<button class="btn btn-sm btn-warning" onclick="prepareResubmit(${c.contentId})">↻ Resubmit</button>`:''}
+        ${c.status==='APPROVED'?
+          `<button class="btn btn-sm btn-success" onclick="doPublish(${c.contentId})">Publish</button>`:''}
+      </div>
+    </div>`).join('')}</div>`;
+}
+async function prepareResubmit(id){
+  const content = await api('GET', `/content/${id}`);
+  if (content.error) { msg('ct-msg', content.error, true); return; }
+  $('ct-title').value = content.title || '';
+  $('ct-genre').value = content.genre || '';
+  $('ct-dur').value = content.duration || '';
+  $('ct-age').value = content.ageRating || '';
+  $('ct-lang').value = content.language || '';
+  $('ct-desc').value = content.description || '';
+  $('ct-resubmitId').value = id;
+  $('ct-submit-btn').textContent = 'Save & Resubmit';
+  $('ct-note').textContent = 'Editing a flagged/rejected item. Update the fields below and submit to resubmit for review.';
+  $('ct-note').style.display = 'block';
+  window.scrollTo({ top: $('page-creator').offsetTop - 40, behavior: 'smooth' });
+}
+async function doPublish(id){
+  const d=await api('POST',`/content/${id}/publish`);
+  toast(d.error||`Published: ${d.title}`); loadMyContent();
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  MODERATOR
+// ══════════════════════════════════════════════════════════════════
+async function loadPending(){
+  const [sub,ur]=await Promise.all([
+    api('GET','/content?status=SUBMITTED'),
+    api('GET','/content?status=UNDER_REVIEW')
+  ]);
+  const all=[...(sub||[]),...(ur||[])];
+  const el=$('pending-list');
+  if(!all.length){el.innerHTML='<p class="empty">No content pending review. 🎉</p>';return;}
+  el.innerHTML=`<div class="grid">${all.map(c=>`
+    <div class="card">
+      <div class="title">${c.title}</div>
+      <div class="meta">
+        ${c.genre?' · '+c.genre:''}
+        ${c.creatorName?' · by '+c.creatorName:''}
+      </div>
+      ${badge(c.status)}
+      <div class="actions">
+        <button class="btn btn-sm btn-success" data-id="${c.contentId}" data-title="${encodeURIComponent(c.title)}" onclick="quickReview(decodeURIComponent(this.dataset.title),'APPROVED',this.dataset.id)">✅ Approve</button>
+        <button class="btn btn-sm btn-danger"  data-id="${c.contentId}" data-title="${encodeURIComponent(c.title)}" onclick="quickReview(decodeURIComponent(this.dataset.title),'REJECTED',this.dataset.id)">❌ Reject</button>
+        <button class="btn btn-sm btn-warning" data-id="${c.contentId}" data-title="${encodeURIComponent(c.title)}" onclick="quickReview(decodeURIComponent(this.dataset.title),'FLAGGED',this.dataset.id)">🚩 Flag</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+function quickReview(title,dec,id){
+  $('mod-contentId').value = id || '';
+  $('mod-contentTitle').value = title;
+  $('mod-selected-title').value = title;
+  $('mod-dec').value = dec;
+  $('mod-comments').focus();
+  toast(`Selected “${title}” → ${dec}. Add comment & submit.`);
+}
+async function doReview(){
+  if (!CU?.userId) { msg('mod-msg','You must be logged in as a moderator first.',true); return; }
+  const contentId = parseInt($('mod-contentId').value, 10);
+  const contentTitle = $('mod-contentTitle').value.trim() || $('mod-selected-title').value.trim();
+  if (!contentTitle && isNaN(contentId)) { msg('mod-msg','Select a content item first.',true); return; }
+
+  const payload = {
+    moderatorId: CU.userId,
+    decision: $('mod-dec').value,
+    comments: $('mod-comments').value
+  };
+  if (!isNaN(contentId) && contentId > 0) payload.contentId = contentId;
+  if (contentTitle) payload.contentTitle = contentTitle;
+
+  const d = await api('POST','/moderation/review', payload);
+  if(d.error) msg('mod-msg',d.error,true);
+  else{
+    msg('mod-msg',`Review submitted: ${d.decision}`,false); toast('Review recorded ✓');
+    $('mod-contentId').value=''; $('mod-contentTitle').value=''; $('mod-selected-title').value=''; $('mod-comments').value='';
+    loadPending();
+  }
+}
+async function loadMyReviews(){
+  const list=await api('GET',`/moderation/moderator/${CU.userId}`);
+  const el=$('my-reviews');
+  if(!list||!list.length){el.innerHTML='<p class="empty">No reviews yet.</p>';return;}
+  el.innerHTML=[...list].reverse().map(r=>`
+    <div class="card" style="margin-bottom:.6rem;">
+      <div style="display:flex;align-items:center;gap:.5rem;">
+        ${badge(r.decision)}
+        <span style="font-size:.8rem;color:var(--muted);">
+          ${r.content?.title||'Unknown content'} &nbsp;·&nbsp; ${r.reviewedAt?.split('T')[0]||''}
+        </span>
+      </div>
+      <p style="margin-top:.4rem;font-size:.83rem;">${r.comments||'–'}</p>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  ADMINISTRATOR
+// ══════════════════════════════════════════════════════════════════
+async function loadAdminDashboard(){
+  const d=await api('GET','/admin/dashboard');
+  const el=$('admin-stats');
+  if(d.error){el.innerHTML=`<div class="alert alert-error">${d.error}</div>`;return;}
+  el.innerHTML=[
+    ['totalUsers','👥 Users'],['totalContent','🎬 Content'],
+    ['totalSubscriptions','💳 Subscriptions'],
+    ['totalStreamingSessions','▶ Sessions'],['totalRatings','⭐ Ratings']
+  ].map(([k,l])=>`<div class="stat-card">
+    <div class="value">${d[k]??0}</div>
+    <div class="label">${l}</div></div>`).join('');
+  const cs=d.contentByStatus||{};
+  $('admin-status-breakdown').innerHTML=
+    `<h3 style="margin-bottom:.8rem;">Content by Status</h3>
+     <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;">
+       ${Object.entries(cs).map(([s,n])=>
+         `${badge(s)}<span style="font-size:.8rem;margin-right:.4rem;color:var(--muted);">×${n}</span>`
+       ).join('')}
+     </div>`;
+}
+async function loadAdminPlans(){
+  const plans=await api('GET','/subscriptions/plans');
+  const el=$('admin-plans');
+  if(!plans||!plans.length){el.innerHTML='<p class="empty">No plans yet.</p>';return;}
+  el.innerHTML=plans.map(p=>`
+    <div class="card" style="margin-bottom:.5rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><strong>${p.name}</strong>
+          <span class="tag" style="margin-left:.4rem;">₹${p.price} / ${p.duration}mo</span>
+        </div>
+        <button class="btn btn-sm btn-danger" onclick="adminDelPlan(${p.planId})">Delete</button>
+      </div>
+    </div>`).join('');
+}
+async function adminCreatePlan(){
+  const body={
+    name:$('ap-name').value.trim(),
+    price:parseFloat($('ap-price').value),
+    duration:parseInt($('ap-dur').value)
+  };
+  if(!body.name||isNaN(body.price)||isNaN(body.duration)){msg('ap-msg','Fill in all fields.',true);return;}
+  const d=await api('POST','/subscriptions/plans',body);
+  if(d.error) msg('ap-msg',d.error,true);
+  else{
+    msg('ap-msg',`Plan created: ${d.name}`,false); toast('Plan created ✓');
+    ['ap-name','ap-price','ap-dur'].forEach(id=>{$(id).value='';});
+    loadAdminPlans();
+  }
+}
+async function adminDelPlan(id){
+  if(!confirm('Delete this plan?'))return;
+  await api('DELETE',`/subscriptions/plans/${id}`);
+  toast('Plan deleted'); loadAdminPlans();
+}
+async function loadUsers(){
+  const list=await api('GET','/users');
+  const el=$('admin-users');
+  if(!list||!list.length){el.innerHTML='<p class="empty">No users.</p>';return;}
+  el.innerHTML=list.map(u=>`
+    <div style="padding:.5rem 0;border-bottom:1px solid #2a2a3a;display:flex;
+                align-items:center;gap:.5rem;font-size:.84rem;flex-wrap:wrap;">
+      <span class="role-badge role-${u.userType}">${u.userType.replace(/_/g,' ')}</span>
+      <strong>${u.name}</strong>
+      <span style="color:var(--muted);">${u.email}</span>
+    </div>`).join('');
+}
+async function loadRevenue(){
+  const d=await api('GET','/admin/revenue');
+  const el=$('revenue-result');
+  if(d.error){el.innerHTML=`<div class="alert alert-error">${d.error}</div>`;return;}
+  el.innerHTML=`<div class="card">
+    <div style="font-size:1.6rem;font-weight:700;color:var(--green);">
+      ₹${(d.totalRevenue||0).toFixed(2)}
+    </div>
+    <div style="color:var(--muted);font-size:.84rem;margin-top:.3rem;">
+      Total Revenue &nbsp;·&nbsp; ${d.totalSubscriptions} subscription(s)
+    </div>
+  </div>`;
+}
+</script>
+</body>
+</html>
